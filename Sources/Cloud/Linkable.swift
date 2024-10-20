@@ -8,23 +8,35 @@ public protocol Linkable {
     var resources: [Output<String>] { get }
 
     var environmentVariables: [String: CustomStringConvertible] { get }
+
+    var condition: [String: AnyEncodable] { get }
 }
 
 extension Linkable {
     public var effect: String {
         "Allow"
     }
+
+    public var condition: [String: AnyEncodable] {
+        [:]
+    }
 }
 
 extension Linkable {
     public var policy: AnyEncodable {
-        Resource.JSON([
+        var statement: [String : Any] = [
+            "Effect": effect,
+            "Action": actions,
+            "Resource": resources,
+        ]
+
+        if !condition.isEmpty {
+            statement["Condition"] = condition
+        }
+
+        return Resource.JSON([
             "Version": "2012-10-17",
-            "Statement": [
-                "Effect": effect,
-                "Action": actions,
-                "Resource": resources,
-            ],
+            "Statement": statement,
         ])
     }
 }
@@ -59,6 +71,14 @@ extension RoleProvider {
 
     @discardableResult
     public func link(_ linkables: [Linkable]) -> Self {
+        for linkable in linkables {
+            link(linkable)
+        }
+        return self
+    }
+
+    @discardableResult
+    public func link(_ linkables: Linkable...) -> Self {
         for linkable in linkables {
             link(linkable)
         }
