@@ -190,6 +190,16 @@ Cancel a deployment:
 swift run Infra cancel --stage development
 ```
 
+## Swift Version
+
+By default, Swift Cloud will use the Swift version of the active Swift toolchain in the machine it runs.
+
+If you prefer to specify a different version, you can do so by writing a `.swift-version` file containing only the version number on it, including only major and minor version, not patch. Supported versions are:
+
+* 5.10
+* 6.0
+* 6.1
+
 ## Home
 
 Swift Cloud allows you to deploy infrastructure across multiple cloud providers.

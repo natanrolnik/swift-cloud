@@ -15,6 +15,13 @@ public struct Builder: Sendable {
 
 extension Builder {
     public func currentSwiftVersion() async throws -> String {
+        do {
+            let (version, _) = try await shellOut(to: "cat", arguments: [".swift-version"])
+            if !version.isEmpty {
+                return version
+            }
+        } catch {}
+
         let (output, _) = try await shellOut(to: "swift", arguments: ["--version"])
         let regex = Regex {
             "Swift version "
