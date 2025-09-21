@@ -90,7 +90,7 @@ extension Pulumi.Client {
 
         // Extract the archive
         try await shellOut(
-            to: .path("/usr/bin/tar"),
+            to: "/usr/bin/tar",
             arguments: ["-xzf", downloadPath, "-C", pulumiPath, "--strip-components=1"]
         )
 
@@ -123,7 +123,7 @@ extension Pulumi.Client {
         environment["PULUMI_SKIP_CONFIRMATIONS"] = "true"
 
         let (stdout, _) = try await shellOut(
-            to: .path(.init(executablePath)),
+            to: executablePath,
             arguments: [command] + arguments + ["--non-interactive"],
             workingDirectory: workingDirectory,
             environment: environment,
