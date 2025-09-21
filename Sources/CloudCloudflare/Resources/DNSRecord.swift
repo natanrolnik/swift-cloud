@@ -3,7 +3,7 @@ extension Cloudflare {
         public let resource: Resource
 
         public var fqdn: Output<String> {
-            resource.output.keyPath("name")
+            resource.output.keyPath("hostname")
         }
 
         public init(
@@ -19,14 +19,15 @@ extension Cloudflare {
             let zone = getZone(name: zoneName)
             resource = Resource(
                 name: "\(zoneName)-\(name)-\(type)-record",
-                type: "cloudflare:DnsRecord",
+                type: "cloudflare:Record",
                 properties: [
-                    "zoneId": zone.zoneId,
+                    "zoneId": zone.id,
                     "type": type,
                     "name": Strings.trimSuffix(name, suffix: ".\(zoneName)").result,
                     "content": value,
                     "proxied": proxied,
                     "ttl": proxied ? 1 : ttl.components.seconds,
+                    "allowOverwrite": true,
                     "comment": "Managed by Swift Cloud",
                 ],
                 options: options,

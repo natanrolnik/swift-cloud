@@ -129,16 +129,16 @@ extension DigitalOcean.App {
 
         public var slug: String {
             switch self {
-            case .shared(let vCPU, let memory):
+            case let .shared(vCPU, memory):
                 return "apps-s-\(vCPU)vcpu-\(memory.formatted())gb"
-            case .dedicated(let vCPU, let memory, _):
+            case let .dedicated(vCPU, memory, _):
                 return "apps-d-\(vCPU)vcpu-\(memory.formatted())gb"
             }
         }
 
         public var autoScalingConfiguration: AutoScalingConfiguration? {
             switch self {
-            case .dedicated(_, _, let autoScaling):
+            case let .dedicated(_, _, autoScaling):
                 return autoScaling
             default:
                 return nil
@@ -161,7 +161,7 @@ extension DigitalOcean.App {
 
             public var value: Int {
                 switch self {
-                case .percent(let value):
+                case let .percent(value):
                     return value
                 }
             }

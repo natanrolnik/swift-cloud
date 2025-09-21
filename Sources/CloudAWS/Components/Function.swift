@@ -46,18 +46,17 @@ extension AWS {
 
             self.environment = Environment(environment, shape: .keyValue)
 
-            dockerImage =
-                switch packageType {
-                case .zip:
-                    nil
-                case .image:
-                    DockerImage(
-                        "\(name)-image",
-                        imageRepository: .shared(options: options),
-                        dockerFilePath: dockerFilePath,
-                        options: options
-                    )
-                }
+            dockerImage = switch packageType {
+            case .zip:
+                nil
+            case .image:
+                DockerImage(
+                    "\(name)-image",
+                    imageRepository: .shared(options: options),
+                    dockerFilePath: dockerFilePath,
+                    options: options
+                )
+            }
 
             role = AWS.Role(
                 "\(name)-role",
