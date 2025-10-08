@@ -69,7 +69,7 @@ extension Binaryen.Client {
 
         // Extract the archive
         try await shellOut(
-            to: .path("/usr/bin/tar"),
+            to: "/usr/bin/tar",
             arguments: ["-xzf", downloadPath, "-C", binaryenPath, "--strip-components=1"]
         )
 
@@ -89,7 +89,7 @@ extension Binaryen.Client {
             try await setup()
         }
         try await shellOut(
-            to: .path(.init(executablePath)),
+            to: executablePath,
             arguments: ["-Oz", "-ffm", "-o", output, input]
         )
     }

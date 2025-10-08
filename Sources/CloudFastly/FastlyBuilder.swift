@@ -21,7 +21,7 @@ extension Builder {
         )
         try Files.copyFile(fromPath: binaryPath, toPath: bootstrapPath)
         try await shellOut(
-            to: .path("/usr/bin/tar"),
+            to: "/usr/bin/tar",
             arguments: [
                 "-czf",
                 "package.tar.gz",
