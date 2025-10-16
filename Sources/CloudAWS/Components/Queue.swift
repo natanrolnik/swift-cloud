@@ -30,6 +30,7 @@ extension AWS {
                 name: "\(name)-dlq",
                 type: "aws:sqs:Queue",
                 properties: [
+                    "name": "\(name)-dlq",
                     "fifoQueue": fifo,
                     "receiveWaitTimeSeconds": 20,
                     "visibilityTimeoutSeconds": visibilityTimeout.components.seconds,
@@ -43,6 +44,7 @@ extension AWS {
                 name: name,
                 type: "aws:sqs:Queue",
                 properties: [
+                    "name": name,
                     "fifoQueue": fifo,
                     "visibilityTimeoutSeconds": visibilityTimeout.components.seconds,
                     "messageRetentionSeconds": messageRetentionInterval.components.seconds,
