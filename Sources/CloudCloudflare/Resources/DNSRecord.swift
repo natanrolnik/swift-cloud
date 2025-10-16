@@ -19,7 +19,7 @@ extension Cloudflare {
             let zone = getZone(name: zoneName)
             resource = Resource(
                 name: "\(zoneName)-\(name)-\(type)-record",
-                type: "cloudflare:DnsRecord",
+                type: "cloudflare:index/dnsRecord:DnsRecord",
                 properties: [
                     "zoneId": zone.zoneId,
                     "type": type,
