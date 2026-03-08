@@ -61,7 +61,7 @@ extension AWS {
 
             dockerImage =
                 switch packageType {
-                case .zip:
+                case .zip, .s3Zip:
                     nil
                 case .image:
                     DockerImage(
@@ -71,6 +71,27 @@ extension AWS {
                         options: options
                     )
                 }
+
+            let s3Code: (bucket: Output<String>, key: Output<String>)?
+            switch packageType {
+            case .s3Zip:
+                let codeBucket = AWS.CodeBucket.shared(options: options)
+                let zipPath = "\(Context.buildDirectory)/lambda/\(targetName)/package.zip"
+                let s3Object = Resource(
+                    name: "\(name)-code",
+                    type: "aws:s3:BucketObjectv2",
+                    properties: [
+                        "bucket": codeBucket.bucket,
+                        "key": "\(name)/package.zip",
+                        "source": ["fn::fileAsset": zipPath],
+                    ],
+                    options: options,
+                    context: context
+                )
+                s3Code = (bucket: codeBucket.bucket, key: s3Object.output.keyPath("key"))
+            default:
+                s3Code = nil
+            }
 
             role = AWS.Role(
                 "\(name)-role",
@@ -96,12 +117,14 @@ extension AWS {
                 type: "aws:lambda:Function",
                 properties: [
                     "role": "\(role.arn)",
-                    "packageType": packageType == .zip ? "Zip" : "Image",
-                    "runtime": packageType == .zip ? runtime.runtimeIdentifier : nil,
-                    "handler": packageType == .zip ? "bootstrap" : nil,
+                    "packageType": packageType == .image ? "Image" : "Zip",
+                    "runtime": packageType == .image ? nil : runtime.runtimeIdentifier,
+                    "handler": packageType == .image ? nil : "bootstrap",
                     "code": packageType == .zip
                         ? ["fn::fileArchive": "\(Context.buildDirectory)/lambda/\(targetName)/package.zip"]
                         : nil,
+                    "s3Bucket": s3Code?.bucket,
+                    "s3Key": s3Code?.key,
                     "imageUri": dockerImage.map { "\($0.uri)" },
                     "architectures": [architecture.lambdaArchitecture],
                     "memorySize": memory,
@@ -177,7 +200,7 @@ extension AWS {
                 }
 
                 switch packageType {
-                case .zip:
+                case .zip, .s3Zip:
                     try await ctx.builder.packageForAwsLambda(
                         targetName: targetName,
                         architecture: architecture,
@@ -210,6 +233,7 @@ extension AWS.Function {
 
     public enum FunctionPackageType {
         case zip
+        case s3Zip
         case image
     }
 

@@ -260,6 +260,13 @@ let staticLambda = AWS.Function(
     runtime: .al2023,
     build: .staticLinuxSDK
 )
+
+// Optional: use S3 for zip files larger than 50 MB (up to ~70 MB)
+let s3Lambda = AWS.Function(
+    "my-s3-lambda-function",
+    targetName: "App",
+    packageType: .s3Zip
+)
 ```
 
 #### API Gateway
