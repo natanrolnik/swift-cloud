@@ -77,12 +77,13 @@ extension AWS {
             case .s3Zip:
                 let codeBucket = AWS.CodeBucket.shared(options: options)
                 let zipPath = "\(Context.buildDirectory)/lambda/\(targetName)/package.zip"
+                let deployId = UUID().uuidString.lowercased()
                 let s3Object = Resource(
                     name: "\(name)-code",
                     type: "aws:s3:BucketObjectv2",
                     properties: [
                         "bucket": codeBucket.bucket,
-                        "key": "\(name)/package.zip",
+                        "key": "\(name)/\(deployId)-package.zip",
                         "source": ["fn::fileAsset": zipPath],
                     ],
                     options: options,
